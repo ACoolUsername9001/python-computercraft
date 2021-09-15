@@ -33,7 +33,7 @@ class CCWebsocketWriter(IOBase):
             except json.decoder.JSONDecodeError:
                 raise ComputerCraftException(res)
 
-            return res[0] if len(res) == 1 else res
+            return res
         else:
             return data
 
