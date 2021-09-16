@@ -29,7 +29,7 @@ class CCWebsocketWriter(IOBase):
             res = self.websocket.recv()
 
             try:
-                res = json.loads(res)
+                res = ReturnValue(self, json.loads(res))
             except json.decoder.JSONDecodeError:
                 raise ComputerCraftException(res)
 
@@ -39,3 +39,16 @@ class CCWebsocketWriter(IOBase):
 
     def disconnect(self):
         self.websocket.close()
+
+
+class ReturnValue(list):
+    def __init__(self, writer, *args, **kwargs):
+        super(ReturnValue, self).__init__(*args, **kwargs)
+        self.writer = writer
+
+
+    def __getattr__(self, item):
+        return self.writer.write(f'returned[1].{item}')
+    
+    def __call__(self, *args):
+        return self.writer.write(f'returned[1]({",".join((str(x) for x in args))})')
